@@ -1,0 +1,28 @@
+# JavaScript dependencies, builds, and test caches
+node_modules/
+dist/
+.vite/
+coverage/
+
+# Python caches and virtual environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Local environment settings
+.env
+.env.*
+!.env.example
+
+# Temporary review artifacts and logs
+/tmp/
+*.log
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Keep source snapshots in backups/ and submission evidence in project/evidence/ tracked.

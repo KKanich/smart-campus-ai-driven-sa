@@ -1,0 +1,149 @@
+Executed: 2026-11-08T23:38:58.651958+05:00 (UTC+05:00; Asia/Qyzylorda)
+Working directory: C:\Users\Kanat\VS Code\AI Driven SA\project
+JavaScript suite exercises the web app. Python suite exercises a separate implementation.
+
+$ npm.cmd test -- --reporter=verbose
+
+> smart-campus-room-availability@0.0.0 test
+> vitest run --reporter=verbose
+
+
+ RUN  v2.1.9 C:/Users/Kanat/VS Code/AI Driven SA/project
+
+ ✓ src/time.test.js > parses "09:30" as 570
+ ✓ src/time.test.js > parses " 660 " as 660
+ ✓ src/time.test.js > parses "24:00" as 1440
+ ✓ src/time.test.js > parses "" as null
+ ✓ src/time.test.js > parses "abc" as null
+ ✓ src/time.test.js > parses "12:60" as null
+ ✓ src/time.test.js > parses "24:01" as null
+ ✓ src/time.test.js > parses "-1" as null
+ ✓ src/time.test.js > parses "660.5" as null
+ ✓ src/time.test.js > formats fixed time and end-of-day unambiguously
+ ✓ src/rooms.test.js > room catalog and filtering > has four complete rooms with unique IDs and fixed time
+ ✓ src/rooms.test.js > room catalog and filtering > includes exact capacity
+ ✓ src/rooms.test.js > room catalog and filtering > excludes insufficient capacity
+ ✓ src/rooms.test.js > room catalog and filtering > requires ALL equipment
+ ✓ src/rooms.test.js > room catalog and filtering > excludes rooms missing any required item
+ ✓ src/rooms.test.js > room catalog and filtering > combines equipment and capacity
+ ✓ src/rooms.test.js > room catalog and filtering > returns no rooms when capacity cannot be met
+ ✓ src/rooms.test.js > room catalog and filtering > rejects invalid attendee count 0
+ ✓ src/rooms.test.js > room catalog and filtering > rejects invalid attendee count -1
+ ✓ src/rooms.test.js > room catalog and filtering > rejects invalid attendee count 1.5
+ ✓ src/rooms.test.js > room catalog and filtering > rejects invalid attendee count NaN
+ ✓ src/rooms.test.js > room catalog and filtering > uses independent schedules for the same interval
+ ✓ src/rooms.test.js > room catalog and filtering > never reports a blocked room available
+ ✓ src/rooms.test.js > room catalog and filtering > deeply freezes the catalog and does not mutate bookings while filtering/checking
+ ✓ src/booking.test.js > can_book > AC1 happy path
+ ✓ src/booking.test.js > can_book > AC1 start not after now
+ ✓ src/booking.test.js > can_book > AC1 start equals now
+ ✓ src/booking.test.js > can_book > AC1 start before now
+ ✓ src/booking.test.js > can_book > AC1 start negative
+ ✓ src/booking.test.js > can_book > AC1 end over 1440
+ ✓ src/booking.test.js > can_book > AC1 end equals 1440 ok
+ ✓ src/booking.test.js > can_book > AC1 start equals end
+ ✓ src/booking.test.js > can_book > AC1 start after end
+ ✓ src/booking.test.js > can_book > AC1 non-integer start
+ ✓ src/booking.test.js > can_book > AC1 non-integer end
+ ✓ src/booking.test.js > can_book > AC1 non-integer now
+ ✓ src/booking.test.js > can_book > AC2 exactly 120 ok
+ ✓ src/booking.test.js > can_book > AC2 121 rejected
+ ✓ src/booking.test.js > can_book > AC2 30 ok
+ ✓ src/booking.test.js > can_book > AC3 blocked rejected
+ ✓ src/booking.test.js > can_book > AC3 blocked even with free slot
+ ✓ src/booking.test.js > can_book > AC4 full overlap rejected
+ ✓ src/booking.test.js > can_book > AC4 partial overlap start inside
+ ✓ src/booking.test.js > can_book > AC4 partial overlap end inside
+ ✓ src/booking.test.js > can_book > AC4 surrounding overlap
+ ✓ src/booking.test.js > can_book > AC4 touch at end ok
+ ✓ src/booking.test.js > can_book > AC1 rejects start equal to now even when endpoint touches
+ ✓ src/booking.test.js > can_book > AC4 before existing ok
+ ✓ src/booking.test.js > can_book > AC4 after existing ok
+ ✓ src/booking.test.js > can_book > AC4 multiple existing one overlaps
+ ✓ src/booking.test.js > can_book > AC5 all pass
+ ✓ src/booking.test.js > can_book > AC5 empty existing
+ ✓ src/booking.test.js > can_book > AC5 does not mutate existing
+ ✓ src/booking.test.js > isValidTimeWindow (AC1) > accepts a valid window strictly after now
+ ✓ src/booking.test.js > isValidTimeWindow (AC1) > rejects non-integer inputs
+ ✓ src/booking.test.js > isValidTimeWindow (AC1) > rejects start not strictly after now
+ ✓ src/booking.test.js > isValidTimeWindow (AC1) > rejects out-of-range or inverted times
+ ✓ src/booking.test.js > isWithinDurationLimit (AC2) > accepts exactly 120 minutes
+ ✓ src/booking.test.js > isWithinDurationLimit (AC2) > rejects 121 minutes
+ ✓ src/booking.test.js > isWithinDurationLimit (AC2) > accepts a short duration
+ ✓ src/booking.test.js > isRoomNotBlocked (AC3) > rejects when blocked
+ ✓ src/booking.test.js > isRoomNotBlocked (AC3) > passes when open
+ ✓ src/booking.test.js > hasNoOverlap (AC4) > rejects a fully-contained slot
+ ✓ src/booking.test.js > hasNoOverlap (AC4) > rejects partial overlap at either end
+ ✓ src/booking.test.js > hasNoOverlap (AC4) > allows endpoint touch (start === e or end === s)
+ ✓ src/booking.test.js > hasNoOverlap (AC4) > does not mutate existing
+ ✓ src/booking.test.js > regression scenarios > rejects a start time in the past (AC1: start must be strictly after now)
+ ✓ src/booking.test.js > regression scenarios > rejects a reversed interval where start > end (AC1: start < end required)
+ ✓ src/booking.test.js > regression scenarios > rejects a 121-minute duration (AC2: duration must not exceed 120)
+ ✓ src/booking.test.js > regression scenarios > rejects any request when the room is blocked (AC3: blocked room always rejected)
+ ✓ src/booking.test.js > regression scenarios > rejects a slot that overlaps an existing booking (AC4: no overlap allowed)
+ ✓ src/booking.test.js > regression scenarios > allows a slot that touches an existing booking at its endpoint (AC4: touch is not overlap)
+ ✓ src/booking.test.js > regression scenarios > does not mutate the caller existing array (AC5: inputs unchanged)
+ ✓ src/booking.test.js > regression scenarios > does not mutate ROOM_FIXTURE during checks (AC5: fixture unchanged)
+ ✓ src/booking.test.js > fixture > ROOM_FIXTURE is frozen
+ ✓ src/booking.test.js > fixture > createRoomState returns an independent mutable copy
+ ✓ src/booking.test.js > AC5 preserves existing bookings on invalid time rejection
+ ✓ src/booking.test.js > AC5 preserves existing bookings on blocked room rejection
+ ✓ src/booking.test.js > AC5 preserves existing bookings on overlap rejection
+ ✓ src/main.test.js > shows four rooms initially
+ ✓ src/main.test.js > switching rooms clears the old result, preserves times and checks the chosen bookings
+ ✓ src/main.test.js > shows empty state, clears old results, disables checking and recovers
+ ✓ src/main.test.js > applies equipment and capacity through UI controls
+ ✓ src/main.test.js > reports blocked rooms unavailable in the UI
+ ✓ src/main.test.js > preserves duration boundaries and clear validation feedback
+ ✓ src/main.test.js > accepts and displays end of day as 24:00
+ ✓ src/main.test.js > shows invalid-attendee feedback and recovers without a stale result
+ ✓ src/main.test.js > AC5 displays exactly one visible Available or Unavailable status
+ ✓ src/main.test.js > F5 filtering out the selected room clears the result and uses the new room schedule
+
+ Test Files  4 passed (4)
+      Tests  89 passed (89)
+   Start at  23:38:59
+   Duration  1.04s (transform 81ms, setup 0ms, collect 182ms, tests 203ms, environment 451ms, prepare 537ms)
+
+
+Exit code: 0
+
+$ npm.cmd run build
+
+> smart-campus-room-availability@0.0.0 build
+> vite build
+
+vite v5.4.21 building for production...
+transforming...
+✓ 8 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                 0.64 kB │ gzip: 0.37 kB
+dist/assets/index-DpSW64t0.css  4.20 kB │ gzip: 1.51 kB
+dist/assets/index-Drl27Nt5.js   8.00 kB │ gzip: 3.10 kB
+✓ built in 103ms
+
+Exit code: 0
+
+$ "C:\Program Files\WindowsApps\OpenAI.CodexPrimaryRuntime.v26-1105-1297-0_26.1105.1297.0_x64__3k8sg7r9htsxt\dependencies\python\python.exe" -m unittest -v test_booking.py
+test_blocked_room (test_booking.TestCanBook.test_blocked_room) ... ok
+test_empty_bookings (test_booking.TestCanBook.test_empty_bookings) ... ok
+test_end_exceeds_day (test_booking.TestCanBook.test_end_exceeds_day) ... ok
+test_exactly_two_hours (test_booking.TestCanBook.test_exactly_two_hours) ... ok
+test_input_unchanged (test_booking.TestCanBook.test_input_unchanged) ... ok
+test_multiple_bookings (test_booking.TestCanBook.test_multiple_bookings) ... ok
+test_over_two_hours (test_booking.TestCanBook.test_over_two_hours) ... ok
+test_overlap_rejected (test_booking.TestCanBook.test_overlap_rejected) ... ok
+test_return_type (test_booking.TestCanBook.test_return_type) ... ok
+test_reversed_times (test_booking.TestCanBook.test_reversed_times) ... ok
+test_start_equals_end (test_booking.TestCanBook.test_start_equals_end) ... ok
+test_starts_at_now (test_booking.TestCanBook.test_starts_at_now) ... ok
+test_touching_endpoints_allowed (test_booking.TestCanBook.test_touching_endpoints_allowed) ... ok
+test_zero_start (test_booking.TestCanBook.test_zero_start) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.000s
+
+OK
+
+Exit code: 0
