@@ -1,60 +1,94 @@
-"""Expense export utilities (baseline with duplicated format conditionals)."""
+"""Expense export utilities refactored with the Strategy pattern."""
 
+from abc import ABC, abstractmethod
 import csv
 import io
 import json
-from typing import List
+from typing import Dict, List
 
 from .calculator import total_amount
 from .models import Expense
 
 
-def get_file_extension(fmt: str) -> str:
-    fmt_norm = fmt.strip().lower()
-    if fmt_norm == "text":
-        return ".txt"
-    elif fmt_norm == "csv":
-        return ".csv"
-    elif fmt_norm == "json":
-        return ".json"
-    else:
-        raise ValueError(f"Unsupported export format: {fmt}")
+class ExportStrategy(ABC):
+    """Abstract strategy defining format-specific expense serialization."""
+
+    extension: str
+
+    @abstractmethod
+    def format_expenses(self, expenses: List[Expense]) -> str:
+        """Render a list of expenses into the target format."""
+
+    @abstractmethod
+    def format_summary(self, count: int, total: float) -> str:
+        """Render an expense summary into the target format."""
 
 
-def export_expenses(expenses: List[Expense], fmt: str) -> str:
-    fmt_norm = fmt.strip().lower()
-    if fmt_norm == "text":
+class TextExportStrategy(ExportStrategy):
+    extension = ".txt"
+
+    def format_expenses(self, expenses: List[Expense]) -> str:
         lines = [
             f"#{e.id} | {e.date} | {e.category} | {e.description} | {e.amount:.2f}"
             for e in expenses
         ]
         return "\n".join(lines)
-    elif fmt_norm == "csv":
+
+    def format_summary(self, count: int, total: float) -> str:
+        return f"Expenses: {count}\nTotal: {total:.2f}"
+
+
+class CsvExportStrategy(ExportStrategy):
+    extension = ".csv"
+
+    def format_expenses(self, expenses: List[Expense]) -> str:
         buf = io.StringIO()
         writer = csv.writer(buf, lineterminator="\n")
         writer.writerow(["id", "date", "category", "description", "amount"])
         for e in expenses:
             writer.writerow([e.id, e.date, e.category, e.description, f"{e.amount:.2f}"])
         return buf.getvalue().strip()
-    elif fmt_norm == "json":
-        return json.dumps([e.to_dict() for e in expenses], indent=2)
-    else:
-        raise ValueError(f"Unsupported export format: {fmt}")
 
-
-def export_summary(expenses: List[Expense], fmt: str) -> str:
-    fmt_norm = fmt.strip().lower()
-    total = total_amount(expenses)
-    count = len(expenses)
-    if fmt_norm == "text":
-        return f"Expenses: {count}\nTotal: {total:.2f}"
-    elif fmt_norm == "csv":
+    def format_summary(self, count: int, total: float) -> str:
         buf = io.StringIO()
         writer = csv.writer(buf, lineterminator="\n")
         writer.writerow(["count", "total"])
         writer.writerow([count, f"{total:.2f}"])
         return buf.getvalue().strip()
-    elif fmt_norm == "json":
+
+
+class JsonExportStrategy(ExportStrategy):
+    extension = ".json"
+
+    def format_expenses(self, expenses: List[Expense]) -> str:
+        return json.dumps([e.to_dict() for e in expenses], indent=2)
+
+    def format_summary(self, count: int, total: float) -> str:
         return json.dumps({"count": count, "total": round(total, 2)}, indent=2)
-    else:
+
+
+EXPORTERS: Dict[str, ExportStrategy] = {
+    "text": TextExportStrategy(),
+    "csv": CsvExportStrategy(),
+    "json": JsonExportStrategy(),
+}
+
+
+def get_exporter(fmt: str) -> ExportStrategy:
+    fmt_norm = fmt.strip().lower()
+    strategy = EXPORTERS.get(fmt_norm)
+    if strategy is None:
         raise ValueError(f"Unsupported export format: {fmt}")
+    return strategy
+
+
+def get_file_extension(fmt: str) -> str:
+    return get_exporter(fmt).extension
+
+
+def export_expenses(expenses: List[Expense], fmt: str) -> str:
+    return get_exporter(fmt).format_expenses(expenses)
+
+
+def export_summary(expenses: List[Expense], fmt: str) -> str:
+    return get_exporter(fmt).format_summary(len(expenses), total_amount(expenses))
