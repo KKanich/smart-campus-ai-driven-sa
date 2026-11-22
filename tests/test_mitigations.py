@@ -3,6 +3,7 @@
 import unittest
 
 from expense_calc.calculator import add_expense, total_amount, totals_by_category
+from expense_calc.exporter import export_expenses
 
 
 class TestRiskMitigationR01(unittest.TestCase):
@@ -35,6 +36,25 @@ class TestRiskMitigationR01(unittest.TestCase):
             add_expense(expenses, "   ", 12.0, "Food", "2026-11-10")
         with self.assertRaises(ValueError):
             add_expense(expenses, "Lunch", 12.0, "", "2026-11-10")
+
+
+class TestRiskMitigationR02(unittest.TestCase):
+    def test_neutralizes_csv_formula_prefixes(self):
+        expenses = []
+        add_expense(expenses, "=CMD|' /C calc'!A0", 10.0, "+Malicious", "2026-11-10")
+        add_expense(expenses, "@SUM(A1:A2)", 5.0, "-Ops", "2026-11-11")
+        csv_out = export_expenses(expenses, "csv")
+        lines = csv_out.splitlines()
+        self.assertIn("'=CMD|' /C calc'!A0", lines[1])
+        self.assertIn("'+Malicious", lines[1])
+        self.assertIn("'@SUM(A1:A2)", lines[2])
+        self.assertIn("'-Ops", lines[2])
+
+    def test_preserves_normal_csv_values(self):
+        expenses = []
+        add_expense(expenses, "Team lunch", 24.50, "Food", "2026-11-10")
+        csv_out = export_expenses(expenses, "csv")
+        self.assertIn("1,2026-11-10,Food,Team lunch,24.50", csv_out)
 
 
 if __name__ == "__main__":

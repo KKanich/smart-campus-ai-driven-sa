@@ -1,4 +1,4 @@
-"""Expense export utilities refactored with the Strategy pattern."""
+"""Expense export utilities refactored with the Strategy pattern and CSV formula sanitization."""
 
 from abc import ABC, abstractmethod
 import csv
@@ -8,6 +8,15 @@ from typing import Dict, List
 
 from .calculator import total_amount
 from .models import Expense
+
+_CSV_FORMULA_PREFIXES = ("=", "+", "-", "@", "\t", "\r")
+
+
+def _sanitize_csv_cell(value: str) -> str:
+    """Neutralize leading spreadsheet formula triggers (CWE-1236) in text CSV cells."""
+    if value and value.startswith(_CSV_FORMULA_PREFIXES):
+        return "'" + value
+    return value
 
 
 class ExportStrategy(ABC):
@@ -46,7 +55,13 @@ class CsvExportStrategy(ExportStrategy):
         writer = csv.writer(buf, lineterminator="\n")
         writer.writerow(["id", "date", "category", "description", "amount"])
         for e in expenses:
-            writer.writerow([e.id, e.date, e.category, e.description, f"{e.amount:.2f}"])
+            writer.writerow([
+                e.id,
+                _sanitize_csv_cell(e.date),
+                _sanitize_csv_cell(e.category),
+                _sanitize_csv_cell(e.description),
+                f"{e.amount:.2f}",
+            ])
         return buf.getvalue().strip()
 
     def format_summary(self, count: int, total: float) -> str:
